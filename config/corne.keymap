@@ -1,0 +1,270 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/ext_power.h>
+#include <dt-bindings/zmk/rgb.h>
+#include <dt-bindings/zmk/mouse.h>
+#include <../boards/shields/corne/boards/nice_nano.overlay>
+
+#define DEFAULT 0
+#define BT      1
+#define NUM     2
+#define MEDIA   3
+#define NAV     4
+#define MOUSE   5
+#define FUN     6
+
+#define AS(keycode) &as LS(keycode) keycode
+
+&lt { quick_tap_ms = <140>; };
+
+/ {
+    macros {
+         ZMK_MACRO(macro_email,
+            tap-ms = <5>;
+            bindings
+                = <&macro_tap &kp C &kp H &kp E &kp U &kp N &kp G &kp DOT &kp E &kp D &kp E &kp N &kp DOT &kp L &kp A &kp W>
+                , <&macro_press &kp LSHFT>
+                , <&macro_tap &kp N2>
+                , <&macro_release &kp LSHFT>
+                , <&macro_tap &kp G &kp M &kp A &kp I &kp L &kp DOT &kp C &kp O &kp M>
+                ;
+        )
+
+/*
+        ZMK_MACRO(macro_imwrite,
+            tap-ms = <10>;
+            bindings
+                = <&macro_press &kp LSHFT>
+                , <&macro_tap &kp I>
+                , <&macro_release &kp LSHFT>
+                , <&macro_tap &kp A &kp M &kp SPACE &kp W &kp R &kp I &kp T &kp I &kp N &kp g &kp SPACE &kp O &kp N &kp SPACE>
+                , <&macro_tap &kp A &kp S>
+                , <&macro_tap &kp C &kp O &kp U &kp N &kp S &kp E &kp L &kp SPACE>
+                , <&macro_tap &kp F &kp O &kp R>
+                ;
+        )
+*/
+    };
+};
+
+/ {
+    behaviors {
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HOMEROW_MODS";
+            #binding-cells = <2>;
+            tapping-term-ms = <180>;
+            quick-tap-ms = <140>;
+            flavor = "tap-preferred";
+            bindings = <&kp>, <&kp>;
+        };
+        
+        as: auto_shift {
+            compatible = "zmk,behavior-hold-tap";
+            label = "AUTO_SHIFT";
+            #binding-cells = <2>;
+            tapping_term_ms = <180>;
+            quick_tap_ms = <0>;
+            flavor = "tap-preferred";
+            bindings = <&kp>, <&kp>;
+        };
+    };
+};
+
+/ {
+    combos {
+        compatible = "zmk,combos";
+        combo_min {
+            timeout-ms = <25>;
+            key-positions = <4 16>;
+            bindings = <&kp MINUS>;
+        };
+        
+        combo_esc {
+            timeout-ms = <25>;
+            key-positions = <28 29>;
+            bindings = <&gresc>;
+        };
+        
+        combo_caps {
+            timeout-ms = <25>;
+            key-positions = <16 17>;
+            bindings = <&caps_word>;
+        }; 
+        
+        combo_lpar {
+            timeout-ms = <25>;
+            key-positions = <4 5>;
+            bindings = <&kp LPAR>;
+        };
+       
+        combo_eql {
+            timeout-ms = <25>;
+            key-positions = <7 19>;
+            bindings = <&kp EQUAL>;
+        };
+        
+        combo_semi {
+            timeout-ms = <20>;
+            key-positions = <18 19>;
+            bindings = <&kp SEMI>;
+        }; 
+        
+        combo_rpar {
+            timeout-ms = <25>;
+            key-positions = <6 7>;
+            bindings = <&kp RPAR>;
+        };
+        
+        combo_print {
+            timeout-ms = <25>;
+            key-positions = <0 11>;
+            bindings = <&kp PSCRN>;
+        };        
+ 
+         combo_play {
+            timeout-ms = <25>;
+            key-positions = <0 24>;
+            bindings = <&kp C_PP>;
+        };
+        
+        combo_mute {
+            timeout-ms = <25>;
+            key-positions = <11 35>;
+            bindings = <&kp C_MUTE>;
+        };
+
+        combo_email {
+            timeout-ms = <25>;
+            key-positions = <30 31>;
+            bindings = <&macro_email>;
+        };
+/*
+        combo_imwrite {
+            timeout-ms = <25>;
+            key-positions = <27 28>;
+            bindings = <&macro_imwrite>;
+        };
+*/
+    };
+};
+
+
+&sk {
+    release-after-ms = <1000>;
+    quick-release;
+    /delete-property/ ignore-modifiers;
+};
+
+
+
+/ {
+        keymap {
+                compatible = "zmk,keymap";
+
+                DEFAULT {
+// -----------------------------------------------------------------------------------------
+//                               | MUTE |  Q  |  W  |  F  |  P  |  B  |   |  J  |  L   |  U  |  Y  |  '  | snip |
+//                               | VOLU |  A  |  R  |  S  |  T  |  G  |   |  M  |  N   |  E  |  I  |  O  | scl u|
+//                               | VOLD |  Z  |  X  |  C  |  D  |  V  |   |  K  |  H   |  ,  |  .  |  /  | scl d|
+//                                                  | TAB | BSP | DEL |   | ESC | SPC  | ENT |
+                        bindings = <
+   &kp C_MUTE   &kp Q      &kp W      &kp F         &kp P        &kp B         &kp J      &kp L            &kp U       &kp Y       AS(SQT)    &kp RG(RS(S))
+   &kp C_VOL_UP &hm LGUI A &hm LALT R &hm LCTRL S   &hm LSHIFT T &kp G         &kp M      &hm RSHIFT N     &hm RCTRL E &hm RALT I  &hm RGUI O &mwh SCROLL_UP
+   &kp C_VOL_DN &kp Z      &kp X      &kp C         &kp D        &kp V         &kp K      &kp H            AS(COMMA)   AS(DOT)     AS(FSLH)   &mwh SCROLL_DOWN
+                                    &lt MEDIA TAB &lt NUM BSPC &lt FUN DEL &lt BT ESC &lt MOUSE SPACE  &lt NAV RET 
+                        >;
+                };
+                BT {
+// -----------------------------------------------------------------------------------------
+//                         |      |     |     |     |     |     |   |     |     |     |     |     | BTCR |
+//                         | EPON |     |     |     |     |     |   |USBPR| BT4 | BT5 |     |     | EPON |
+//                         | EPOFF|     |     |     |     |     |   |BT PR| BT1 | BT2 | BT3 |     | EPOFF|
+//                                            |     |     |     |   |     |     |     |     |
+                        bindings = <
+   &trans  &trans          &trans          &trans          &trans          &rgb_ug RGB_TOG         &trans        &trans        &trans       &trans       &trans &bt BT_CLR
+   &trans  &rgb_ug RGB_SPI &rgb_ug RGB_HUI &rgb_ug RGB_SAI &rgb_ug RGB_BRI &rgb_ug RGB_EFF         &out OUT_USB  &bt BT_SEL 3  &bt BT_SEL 4 &trans       &trans &ext_power EP_ON
+   &trans  &rgb_ug RGB_SPD &rgb_ug RGB_HUD &rgb_ug RGB_SAD &rgb_ug RGB_BRD &rgb_ug RGB_EFR         &out OUT_BLE  &bt BT_SEL 0  &bt BT_SEL 1 &bt BT_SEL 2 &trans &ext_power EP_OFF
+                                      	   &trans          &trans          &trans                  &trans        &trans        &trans
+                        >;
+                };
+
+                NUM {
+// -----------------------------------------------------------------------------------------
+//                        |      |     |     |     |     |     |   |  [  |  7  |  8  |  9  |  -  |  \   |
+//                        |      | GUI | ALT | CTL | SFT |     |   |  ]  |  4  |  5  |  6  |  *  | GRV  |
+//                        |      |     |     |     |     |     |   |  \  |  1  |  2  |  3  |  /  |   =  |
+//                                           |     |     |     |   |  +  |  0  |  .  |     |
+                        bindings = <
+   &trans   &trans     &trans     &trans     &trans     &trans         AS(LBKT)   AS(N7)  AS(N8) AS(N9) &kp MINUS &kp BACKSLASH
+   &trans   &kp LGUI   &kp LALT   &kp LCTRL  &kp LSHFT  &trans         AS(RBKT)   AS(N4)  AS(N5) AS(N6) &kp STAR  AS(GRAVE)
+   &trans   &trans     &trans     &trans     &trans     &trans         AS(BSLH)   AS(N1)  AS(N2) AS(N3) &kp FSLH  &kp EQUAL
+                          	      &trans     &trans     &trans         &kp PLUS   &kp N0  &kp DOT
+                        >;
+                };
+                
+                MEDIA {
+// -----------------------------------------------------------------------------------------
+//                        |      |     |     |     |     |     |   |     |     |     |     |     |      |
+//                        |      | GUI | ALT | CTL | SFT |     |   |     | VUP | BUP | PLY | NXT |      |
+//                        |      |     |     |     |     |     |   |     | VDN | BDN | PSE | PRV |      |
+//                                           |     |     |     |   |     |     | MUTE|     |
+                        bindings = <
+   &trans   &trans     &trans     &trans     &trans     &trans         &trans   &trans       &trans       &trans      &trans     &trans
+   &trans   &kp LGUI   &kp LALT   &kp LCTRL  &kp LSHFT  &trans         &trans   &kp C_VOL_UP &kp C_BRI_UP &kp C_PP    &kp C_NEXT &trans
+   &trans   &trans     &trans     &trans     &trans     &trans         &trans   &kp C_VOL_DN &kp C_BRI_DN &kp C_PAUSE &kp C_PREV &trans
+                          	      &trans     &trans     &trans         &trans   &kp C_MUTE   &trans
+                        >;
+                };
+                
+                NAV {
+// -----------------------------------------------------------------------------------------
+//                          |      |     | HOME|  UP | END | INS |   |     |     |     |     |     |      |
+//                          |      |     | LEFT| DOWN|RIGHT| CAPS|   |     | SFT | CTL | ALT | GUI |      |
+//                          |      |     | PGUP| PGDN|     |PSCRN|   |     |     |     |     |     |      |
+//                                             |     |     |     |   |     |     |     |     |
+                        bindings = <
+   &trans   &trans     &kp HOME   &kp UP     &kp END    &kp INS        &trans   &trans     &trans     &trans     &trans     &trans
+   &trans   &trans     &kp LEFT   &kp DOWN   &kp RIGHT  &kp CAPS       &trans   &kp RSHFT  &kp RCTRL  &kp RALT   &kp RGUI   &trans
+   &trans   &trans     &kp PG_UP  &kp PG_DN  &kp SLCK   &kp KP_NUM     &trans   &trans     &trans     &trans     &trans     &trans
+                          	      &trans     &trans     &trans         &trans   &trans     &trans
+                        >;
+                };
+                
+                MOUSE {
+// -----------------------------------------------------------------------------------------
+//                        |      |     | MU  |     |     |     |   |     |     |     |     |     |      |
+//                        |      | ML  | MD  | MR  |     |     |   |     | SFT | CTL | ALT | GUI |      |
+//                        |      |     |     |     |     |     |   |     |     |     |     |     |      |
+//                                           | M2  | M1  | M3  |   |     |     |     |     |
+                        bindings = <
+   &trans     &trans           &mkp RCLK      &mmv MOVE_UP     &mkp LCLK         &trans        &trans   &trans     &trans     &trans     &trans     &trans
+   &trans     &trans           &mmv MOVE_LEFT &mmv MOVE_DOWN   &mmv MOVE_RIGHT   &trans        &trans   &kp RSHFT  &kp RCTRL  &kp RALT   &kp RGUI   &trans
+   &trans     &mwh SCROLL_LEFT &mwh SCROLL_UP &mwh SCROLL_DOWN &mwh SCROLL_RIGHT &trans        &trans   &trans     &trans     &trans     &trans     &trans
+                          	                  &mkp RCLK        &mkp LCLK         &mkp MCLK     &trans   &trans     &trans
+                        >;
+                };
+                
+                FUN {
+// -----------------------------------------------------------------------------------------
+//                        |      |     |     |     |     |     |   |     |  F1 |  F2 |  F3 |  F4 |PRTSC|
+//                        |      | GUI | ALT | CTL | SFT |     |   |     |  F5 |  F6 |  F7 |  F8 |     |
+//                        |      |     |     |     |     |     |   |     |  F9 | F10 | F11 | F12 |     |
+//                                           |     |     |     |   |     |     |     |     |
+                        bindings = <
+   &trans   &trans     &trans     &trans     &trans     &trans         &trans   &kp F1  &kp F2  &kp F3  &kp F4   &kp PSCRN
+   &trans   &kp LGUI   &kp LALT   &kp LCTRL  &kp LSHFT  &trans         &trans   &kp F5  &kp F6  &kp F7  &kp F8   &trans
+   &trans   &trans     &trans     &trans     &trans     &trans         &trans   &kp F9  &kp F10 &kp F11 &kp F12  &trans
+                          	      &trans     &trans     &trans         &trans   &trans  &trans
+                        >;
+                };
+        };
+};
